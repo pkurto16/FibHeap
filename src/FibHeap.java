@@ -1,59 +1,110 @@
+//We have to track the size when we merge (not when we add)
 public class FibHeap<E> {
-	E[][] heapData; //this tracks some data E
-	int[][] heapProperties; //this tracks the properties of the heap: lossCount and priority
-	
+
+	private class Node {
+		E data;
+		int priority;
+		int lossCount = 0;
+		int size = 0;
+		Node parent;
+		Node left;
+		Node right;
+		Node child;
+
+		public Node(E data, int priority) {
+			this.data = data;
+			this.priority = priority;
+			this.left = this;
+			this.right = this;
+
+		}
+
+		public Node(Node left, Node right, E data, int priority) {
+			this.left = left;
+			this.right = right;
+			this.data = data;
+			this.priority = priority;
+		}
+
+		public Node(Node parent, Node left, Node right, E data, int priority) {
+			this.parent = parent;
+			this.left = left;
+			this.right = right;
+			this.data = data;
+			this.priority = priority;
+		}
+	}
+
+	Node root;
 	int size;
-	//We are storing an extra variable instead of just repointing a pointer
-	//Ask Mr. Carroll if this is fine
-	int rootIndex;
 
 	public FibHeap() {
 		size = 0;
-		heapData = (E[][]) new Object[0][0];
-		heapProperties = new int[0][0];
-		
 	}
 
-	public boolean push(E data, int priority) {
-		if (heapData.length == size) {
-			doubleLength();
+	public void push(E data, int priority) {
+		if(size == 0) {
+			root = new Node(data, priority);
+			return;
 		}
-		heapData[size][0] = data;
-		heapProperties[size][0] = 10 * priority;
-		return true;
+		root.left = new Node(root.left, root, data, priority);
 	}
 
-	//Utility method to double the length of the arrays that represent the heap
-	private void doubleLength() {
-		E[][] newHeapData = (E[][]) new Object[heapData.length * 2 + 1][];
-		int[][] newHeapProperties = new int[heapData.length * 2 + 1][];
-		for (int i = 0; i < size; i++) { 
-			newHeapData[i] = heapData[i];
-			newHeapProperties[i] = heapProperties[i];
+	// pops off the root
+	public E popMin() {
+		if(size<=0) {
+			throw new NullPointerException();
 		}
-		heapData = newHeapData;
-		heapProperties = newHeapProperties;
+		E minData = root.data;
+		displaceRoot();
+		mergeAll();
+		return minData;
 	}
 
-	
-	//pops off the root
-	public E popMin(){
+	private void displaceRoot() {
+		if(root.child == null) {
+			root.left.right = root.right;
+			root.right.left = root.left;
+			root = root.right;
+			return;
+		}
+		root.left.right = root.child;
+		root.right.left = root.child.left;
+		root.child.left.right = root.right;
+		root.child.left = root.left;
+		root.child.parent = null;
+		root = root.right;
+	}
+
+	// This is a utility method to perform merges as part of the fib heap cleanup (happens on every popMin)
+	//must track size during merge
+	private void mergeAll() {
+		Node currentNode = root;
+		while (currentNode.right != currentNode){
+			
+		}
 		
-		)
-		return heapData[rootIndex][0];
+		
+		for (int i = 1; i < root.size; i++){
+			currentNode = currentNode.right;
+			if (currentNode.size > maxDegree) maxDegree = currentNode.size;
+		}
+		int[] degreeArray = new int[maxDegree];
+		mergeAll(root, degreeArray);
 	}
 	
-	//This is a utility method to 
-	private void mergeAll(){
-		
+	private void mergeAll() {
+		int maxDegree = getMaxDegree;
+		union
 	}
 	
-	//decreases the key (useful for Dijkstra's)
+	// decreases the key (useful for Dijkstra's)
 	public void decreaseKey() {
-		
+
 	}
-	//This method adjusts the heap based on if a node is a loser after a popMin
-	private void shuffleHeap(){
-		
+
+	// This method adjusts the heap based on if a node is a loser after a popMin
+	private void shuffleHeap() {
+
 	}
 }
