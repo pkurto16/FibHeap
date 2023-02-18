@@ -1,7 +1,9 @@
+import java.util.ArrayList;
+
 //We have to track the size when we merge (not when we add)
 public class FibHeap<E> {
 
-	private class Node {
+	public class Node {
 		E data;
 		int priority;
 		int lossCount = 0;
@@ -51,24 +53,32 @@ public class FibHeap<E> {
 	public FibHeap() {
 		size = 0;
 	}
-
+	
 	public void push(E data, int priority) {
 		if(size == 0) {
 			root = new Node(data, priority);
+			size++;
 			return;
 		}
-		root.left = new Node(root.left, root, data, priority);
+		root.right = new Node(root, root.right, data, priority);
+		if(root.left==root) {
+			root.left=root.right;
+		}
+		size++;
 	}
 
 	// pops off the root
 	public E popMin() {
 		if(size <= 0) {
+			System.out.println("We are throwing a null");
 			throw new NullPointerException();
 		}
 		E minData = root.data;
 		int maxDegree = getMaxDegree(root, 0);
+		System.out.println("Max degree is " + maxDegree);
 		displaceRoot();
 		mergeAll(maxDegree);
+		size--;
 		return minData;
 	}
 	
@@ -88,6 +98,7 @@ public class FibHeap<E> {
 			root.left.right = root.right;
 			root.right.left = root.left;
 			root = root.right;
+			System.out.println("When the root is displaced, it is now " + root.data);
 			return;
 		}
 		root.left.right = root.child;
@@ -95,28 +106,30 @@ public class FibHeap<E> {
 		root.child.left.right = root.right;
 		root.child.left = root.left;
 		root.child.parent = null;
-		root = root.right;
 	}
 
 	// This is a utility method to perform merges as part of the fib heap cleanup (happens on every popMin)
 	//must track size during merge
 	
 	private void mergeAll(int maxDegree) {
-		Node[] nodesOfDegree =  (Node[]) new Object[maxDegree + 1];
-		mergeHelper(nodesOfDegree,root);
+		Object[] nodesOfDegree = new Object[maxDegree + 1 + (int)( Math.log(size) / Math.log(2))];
+		System.out.println(size);
+		System.out.println("Arr Size:"+(int)((int)( Math.log(size) / Math.log(2))));
+		mergeHelper(nodesOfDegree,root, false);
 	}
 	
-	private void mergeHelper(Node[] nodesOfDegree, Node currentNode) {
-		if (currentNode.equals(root)) {
+	//this.getValue == BAD
+	private void mergeHelper(Object[] nodesOfDegree, Node currentNode, boolean rootIsAdded) {
+		if ((currentNode.equals(root) && rootIsAdded) || root.right==root) {
 			return;
 		}
 		if(nodesOfDegree[currentNode.degree] != null) {
-			mergeTrees(nodesOfDegree[currentNode.degree], currentNode);
-			mergeHelper((Node[]) new Object[nodesOfDegree.length], root);
+			mergeTrees((Node) nodesOfDegree[currentNode.degree], currentNode);
+			mergeHelper(new Object[nodesOfDegree.length], root , false);
 		}
 		else {
 			nodesOfDegree[currentNode.degree] = currentNode;
-			mergeHelper(nodesOfDegree, currentNode.right);
+			mergeHelper(nodesOfDegree, currentNode.right, true);
 		}
 	}
 	
