@@ -7,6 +7,7 @@ class FibHeapTest {
 	@Test
 	void test() {
 		FibHeap<Integer> heap = new FibHeap<Integer>();
+		System.out.println("MICRO TEST:");
 		heap.push(0, 0);
 		assertEquals(0, heap.popMin());
 	}
@@ -14,6 +15,7 @@ class FibHeapTest {
 	@Test
 	void testBiggerheap(){
 		FibHeap<Integer> heap = new FibHeap<Integer>();
+		System.out.println("\n\n\nMINI TEST:");
 		heap.push(0, 1);
 		heap.push(0, 2);
 		heap.push(0, 3);
@@ -25,9 +27,9 @@ class FibHeapTest {
 	@Test
 	void stressTest() {
 		FibHeap<Integer> heap = new FibHeap<Integer>();
-		
+		System.out.println("\n\n\nSTRESS TEST:");
 		for(int i = 0; i < STRESS_TEST_NUM; i++) {
-			int rand = (int)(Math.random() * STRESS_TEST_NUM);
+			int rand = (int)(1+Math.random() * STRESS_TEST_NUM);
 			heap.push(rand,rand);
 			System.out.println(rand);
 			if(i % 5 == 0) {
@@ -45,18 +47,13 @@ class FibHeapTest {
 	@Test
 	void quickTest(){
 		FibHeap<Integer> heap = new FibHeap<Integer>();
-		System.out.println("\n\n\nstart");
+		System.out.println("\n\n\nQUICK TEST:");
 		heap.push(1, 1);
 		heap.push(11, 11);
 		heap.push(15, 15);
 		heap.push(6, 6);
 		heap.push(19, 19);
-		System.out.println(heap.root.right.data);
 		assertEquals(1, heap.popMin());
-		
-		System.out.println(heap.root.data);
-		System.out.println(heap.root.left.data);
-		System.out.println(heap.root.right.data);
 		
 	}
 }

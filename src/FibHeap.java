@@ -61,6 +61,7 @@ public class FibHeap<E> {
 			return;
 		}
 		root.right = new Node(root, root.right, data, priority);
+		root.right.right.left = root.right;
 		if(root.left==root) {
 			root.left=root.right;
 		}
@@ -73,26 +74,27 @@ public class FibHeap<E> {
 			System.out.println("We are throwing a null");
 			throw new NullPointerException();
 		}
+		System.out.println("Rights:"
+		+root.data+"->"
+		+root.right.data+"->"
+		+root.right.right.data+"->"
+		+root.right.right.right.data+"->"
+		+root.right.right.right.right.data+"->"
+		+root.right.right.right.right.right.data);
+		System.out.println("Lefts:"
+				+root.left.left.left.left.left.data+"<-"
+				+root.left.left.left.left.data+"<-"
+				+root.left.left.left.data+"<-"
+				+root.left.left.data+"<-"
+				+root.left.data+"<-"
+				+root.data);
 		E minData = root.data;
-		int maxDegree = getMaxDegree(root, 0);
-		System.out.println("Max degree is " + maxDegree);
 		displaceRoot();
-		mergeAll(maxDegree);
+		mergeAll();
 		size--;
 		return minData;
 	}
 	
-	private int getMaxDegree(Node currentNode, int max){
-		if (currentNode.equals(root)){
-			return max;
-		}
-		
-		if(currentNode.degree > max) {
-			max = currentNode.degree;
-		}
-		return getMaxDegree(currentNode.right, max);
-	}
-
 	private void displaceRoot() {
 		if(root.child == null) {
 			root.left.right = root.right;
@@ -111,10 +113,10 @@ public class FibHeap<E> {
 	// This is a utility method to perform merges as part of the fib heap cleanup (happens on every popMin)
 	//must track size during merge
 	
-	private void mergeAll(int maxDegree) {
-		Object[] nodesOfDegree = new Object[maxDegree + 1 + (int)( Math.log(size) / Math.log(2))];
+	private void mergeAll() {
+		Object[] nodesOfDegree = new Object[(int)( Math.log(size) / Math.log(1.2))];
 		System.out.println(size);
-		System.out.println("Arr Size:"+(int)((int)( Math.log(size) / Math.log(2))));
+		System.out.println("Arr Size:" + (int)( Math.log(size) / Math.log(1.2)));
 		mergeHelper(nodesOfDegree,root, false);
 	}
 	
@@ -135,10 +137,10 @@ public class FibHeap<E> {
 	
 	private void mergeTrees(Node n1, Node n2){
 		if(n1.priority >= n2.priority) {
-			mergeOrderedTrees(n1, n2);
+			mergeOrderedTrees(n2, n1);
 		}
 		else {
-			mergeOrderedTrees(n2, n1);
+			mergeOrderedTrees(n1, n2);
 		}
 	}
 	
@@ -154,6 +156,7 @@ public class FibHeap<E> {
 			newChild.left = newChild;
 			newChild.parent = min;
 			min.degree++;
+			return;
 		}
 		newChild.right = min.child;
 		newChild.left = min.child.left;
