@@ -74,20 +74,34 @@ public class FibHeap<E> {
 			System.out.println("We are throwing a null");
 			throw new NullPointerException();
 		}
-		System.out.println("Rights:"
-		+root.data+"->"
-		+root.right.data+"->"
-		+root.right.right.data+"->"
-		+root.right.right.right.data+"->"
-		+root.right.right.right.right.data+"->"
-		+root.right.right.right.right.right.data);
-		System.out.println("Lefts:"
-				+root.left.left.left.left.left.data+"<-"
-				+root.left.left.left.left.data+"<-"
-				+root.left.left.left.data+"<-"
-				+root.left.left.data+"<-"
-				+root.left.data+"<-"
-				+root.data);
+//		System.out.println("Rights:"
+//		+root.data+"->"
+//		+root.right.data+"->"
+//		+root.right.right.data+"->"
+//		+root.right.right.right.data+"->"
+//		+root.right.right.right.right.data+"->"
+//		+root.right.right.right.right.right.data);
+//		System.out.println("Lefts:"
+//				+root.left.left.left.left.left.data+"<-"
+//				+root.left.left.left.left.data+"<-"
+//				+root.left.left.left.data+"<-"
+//				+root.left.left.data+"<-"
+//				+root.left.data+"<-"
+//				+root.data);
+		try {
+			System.out.println(printRights(root, false));
+		}
+		catch(Exception e) {
+			System.out.println("ERROR (rights)!!!!");
+		}
+		
+		try {
+			System.out.println(printLefts(root, false));
+		}
+		catch(Exception e) {
+			System.out.println("ERROR (lefts)!!!!");
+		}
+		
 		E minData = root.data;
 		displaceRoot();
 		mergeAll();
@@ -95,6 +109,19 @@ public class FibHeap<E> {
 		return minData;
 	}
 	
+	private String printLefts(Node current, boolean rootAdded) {
+		if(current==root && rootAdded) {
+			return current.data+"";
+		}
+		return printLefts(current.left,true)+ "<-" + current.data;
+	}
+	
+	private String printRights(Node current, boolean rootAdded) {
+		if(current==root && rootAdded) {
+			return ""+current.data;
+		}
+		return current.data+"->"+printRights(current.right,true);
+	}
 	private void displaceRoot() {
 		if(root.child == null) {
 			root.left.right = root.right;
@@ -110,13 +137,15 @@ public class FibHeap<E> {
 		root.child.parent = null;
 	}
 
+	
+
 	// This is a utility method to perform merges as part of the fib heap cleanup (happens on every popMin)
 	//must track size during merge
 	
 	private void mergeAll() {
-		Object[] nodesOfDegree = new Object[(int)( Math.log(size) / Math.log(1.2))];
+		Object[] nodesOfDegree = new Object[(int)( Math.log(size) / Math.log(1.618)) + 1];
 		System.out.println(size);
-		System.out.println("Arr Size:" + (int)( Math.log(size) / Math.log(1.2)));
+		System.out.println("Arr Size:" + nodesOfDegree.length);
 		mergeHelper(nodesOfDegree,root, false);
 	}
 	
@@ -147,22 +176,39 @@ public class FibHeap<E> {
 	private void mergeOrderedTrees(Node min, Node newChild) {
 		if(newChild == root) {
 			root = root.right;
+			newChild.left.right.left = newChild.left;
+			newChild.left.left.right = newChild.right;
+			if(min.child == null){
+				min.child = newChild.left;
+				newChild.left.right = newChild.left;
+				newChild.left.left = newChild.left;
+				newChild.left.parent = min;
+				min.degree++;
+				return;
+			}
+			newChild.left.right = min.child;
+			newChild.left.left = min.child.left;
+			min.child.left.right = newChild.left;
+			min.child.left = newChild.left;
+			newChild.left.parent = min;
 		}
-		newChild.right.left = newChild.left;
-		newChild.left.right = newChild.right;
-		if(min.child==null){
-			min.child = newChild;
-			newChild.right = newChild;
-			newChild.left = newChild;
+		else {
+			newChild.right.left = newChild.left;
+			newChild.left.right = newChild.right;
+			if(min.child == null){
+				min.child = newChild;
+				newChild.right = newChild;
+				newChild.left = newChild;
+				newChild.parent = min;
+				min.degree++;
+				return;
+			}
+			newChild.right = min.child;
+			newChild.left = min.child.left;
+			min.child.left.right = newChild;
+			min.child.left = newChild;
 			newChild.parent = min;
-			min.degree++;
-			return;
 		}
-		newChild.right = min.child;
-		newChild.left = min.child.left;
-		min.child.left.right = newChild;
-		min.child.left = newChild;
-		newChild.parent = min;
 		min.degree++;
 	}
 

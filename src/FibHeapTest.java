@@ -21,7 +21,6 @@ class FibHeapTest {
 		heap.push(0, 3);
 		heap.popMin();
 		
-		
 	}
 	
 	@Test
@@ -29,17 +28,17 @@ class FibHeapTest {
 		FibHeap<Integer> heap = new FibHeap<Integer>();
 		System.out.println("\n\n\nSTRESS TEST:");
 		for(int i = 0; i < STRESS_TEST_NUM; i++) {
-			int rand = (int)(1+Math.random() * STRESS_TEST_NUM);
-			heap.push(rand,rand);
-			System.out.println(rand);
+			int rand = (int)(1 + Math.random() * STRESS_TEST_NUM);
+			heap.push(rand, rand);
+			System.out.println("random number is " + rand);
 			if(i % 5 == 0) {
-				heap.popMin();
+				System.out.println(heap.popMin());
 			}
 		}
 		int curr = 0;
 		for(int i = 0; i< heap.size; i++) {
 			int next = heap.popMin();
-			assertTrue(next>=curr);
+			assertTrue(next >= curr);
 			curr = next;
 		}
 	}
@@ -54,6 +53,7 @@ class FibHeapTest {
 		heap.push(6, 6);
 		heap.push(19, 19);
 		assertEquals(1, heap.popMin());
+		System.out.println("The new root is " + heap.root.data);
 		
 	}
 }
