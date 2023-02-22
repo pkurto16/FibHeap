@@ -1,5 +1,5 @@
 //We have to track the size when we merge (not when we add)
-public class FibHeap<E> {
+public class FibHeap<E extends Comparable> {
 
 	public class Node {
 		E data;
@@ -61,10 +61,13 @@ public class FibHeap<E> {
 		root.right = new Node(root, root.right, data, priority);
 		if(root.left==root) {
 			root.left=root.right;
+			size++;
 			return;
 		}
 		root.right.right.left = root.right;
-		
+		if(root.right.priority<root.priority) {
+			root= root.right;
+		}
 		size++;
 	}
 
@@ -75,6 +78,8 @@ public class FibHeap<E> {
 			throw new NullPointerException();
 		}
 		System.out.println("Level order: \n"+visualString(root, root, false,0));
+		System.out.println("The root is " + root.data);
+		System.out.println("The size is " + size+"\n\n");
 //		System.out.println(printRights(root, false));
 //		System.out.println(printLefts(root, false));
 		
@@ -83,6 +88,7 @@ public class FibHeap<E> {
 		mergeAll();
 		size--;
 		System.out.println("The level order after popMin is:\n" + visualString(root, root, false,0));
+		System.out.println("The size is " + size+"\n\n");
 		return minData;
 	}
 	
@@ -151,7 +157,7 @@ public class FibHeap<E> {
 	
 	//this.getValue == BAD
 	private void mergeHelper(Object[] nodesOfDegree, Node currentNode, boolean rootIsAdded) {
-		if ((currentNode.equals(root) && rootIsAdded) || root.right==root) {
+		if ((currentNode.equals(root) && rootIsAdded) || root.right.equals(root)) {
 			return;
 		}
 		if(nodesOfDegree[currentNode.degree] != null) {
@@ -182,6 +188,9 @@ public class FibHeap<E> {
 			newChild.left = newChild;
 			newChild.parent = min;
 			min.degree++;
+			if(newChild.equals(root)) {
+				root = min;
+			}
 			return;
 		}
 		newChild.right = min.child;
@@ -190,6 +199,9 @@ public class FibHeap<E> {
 		min.child.left = newChild;
 		newChild.parent = min;
 		min.degree++;
+		if(newChild.equals(root)) {
+			root = min;
+		}
 	}
 
 	// decreases the key (useful for Dijkstra's)

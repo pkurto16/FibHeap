@@ -56,4 +56,33 @@ class FibHeapTest {
 		System.out.println("The new root is " + heap.root.data);
 		
 	}
+	@Test
+	void peterTest(){
+		FibHeap<Integer> heap = new FibHeap<Integer>();
+		System.out.println("\n\n\nPeter TEST:");
+		heap.push(8, 8);
+		assertEquals(8, heap.popMin());
+		assertEquals(0, heap.size);
+		heap.push(20, 20);
+		heap.push(13, 13);
+		heap.push(4, 4);
+		heap.push(1, 1);
+		heap.push(12, 12);
+		assertEquals(1, heap.popMin());
+		assertEquals(4, heap.size);
+		heap.push(3, 3);
+		heap.push(16, 16);
+		heap.push(10, 10);
+		heap.push(13, 13);
+		heap.push(1, 1);
+		assertEquals(1, heap.popMin());
+		assertEquals(8, heap.size);
+		heap.push(11, 11);
+		heap.push(20, 20);
+		heap.push(6, 6);
+		heap.push(12, 12);
+		heap.push(17, 17);
+		assertEquals(3, heap.popMin());
+		assertEquals(12, heap.size);
+	}
 }
