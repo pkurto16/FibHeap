@@ -3,7 +3,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 class FibHeapTest {
-	static final int STRESS_TEST_NUM = 20;
+	static final int STRESS_TEST_NUM = 200;
 	@Test
 	void test() {
 		FibHeap<Integer> heap = new FibHeap<Integer>();

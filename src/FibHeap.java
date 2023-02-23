@@ -1,5 +1,5 @@
 //We have to track the size when we merge (not when we add)
-public class FibHeap<E extends Comparable> {
+public class FibHeap<E> {
 
 	public class Node {
 		E data;
@@ -16,7 +16,6 @@ public class FibHeap<E extends Comparable> {
 			this.priority = priority;
 			this.left = this;
 			this.right = this;
-
 		}
 		
 		public Node(Node parent, E data, int priority) {
@@ -25,7 +24,6 @@ public class FibHeap<E extends Comparable> {
 			this.left = this;
 			this.right = this;
 			this.parent = parent;
-
 		}
 
 
@@ -61,12 +59,11 @@ public class FibHeap<E extends Comparable> {
 		root.right = new Node(root, root.right, data, priority);
 		if(root.left==root) {
 			root.left=root.right;
-			size++;
-			return;
+		}else{
+			root.right.right.left = root.right;
 		}
-		root.right.right.left = root.right;
-		if(root.right.priority<root.priority) {
-			root= root.right;
+		if(root.right.priority < root.priority) {
+			root = root.right;
 		}
 		size++;
 	}
@@ -80,56 +77,76 @@ public class FibHeap<E extends Comparable> {
 		System.out.println("Level order: \n"+visualString(root, root, false,0));
 		System.out.println("The root is " + root.data);
 		System.out.println("The size is " + size+"\n\n");
-//		System.out.println(printRights(root, false));
-//		System.out.println(printLefts(root, false));
 		
 		E minData = root.data;
 		displaceRoot();
 		mergeAll();
 		size--;
+		updateRoot(root,root,false);
 		System.out.println("The level order after popMin is:\n" + visualString(root, root, false,0));
 		System.out.println("The size is " + size+"\n\n");
 		return minData;
 	}
 	
+	private void updateRoot(Node current, Node base, boolean rootAdded) {
+		if(current.priority < root.priority) root = current;
+		if (current.equals(base) && rootAdded){
+			return;
+		}
+		updateRoot(current.right, base, true);
+	}
+
 	private String visualString(Node current, Node base, boolean baseAdded, int tabs) {
 		String returned = "";
 		for(int i = 0; i<tabs; i++) {
-			returned+="║   ";
+			returned+="║       ";
 		}
-		returned += current.data;
+		returned += "["+current.data +","+ current.degree+"]";
 		if(current.child != null) {
 			returned += "═══╗\n" + visualString(current.child, current.child, false, tabs+1)+"\n";
 			for(int i = 0; i<tabs; i++) {
-				returned+="║   ";
+				returned+="║       ";
 			}
-			returned+="║   ";
+			returned+="║       ";
 		}
 		if((current.right == base && baseAdded) || base.right == base) {
 			return returned;
 		}
 		returned += "\n";
 		for(int i = 0; i<tabs+1; i++) {
-			returned+="║   ";
+			returned+="║       ";
 		}
 		returned+="\n";
 		
 		return returned + visualString(current.right, base, true, tabs);
 	}
 	
-	private String printLefts(Node current, boolean rootAdded) {
-		if(current==root && rootAdded) {
-			return current.data+"";
+	
+	private String visualStringLeft(Node current, Node base, boolean baseAdded, int tabs) {
+		String returned = "";
+		for(int i = 0; i<tabs; i++) {
+			returned+="║       ";
 		}
-		return printLefts(current.left,true)+ "<-" + current.data;
+		returned += "["+current.data +","+ current.degree+"]";
+		if(current.child != null) {
+			returned += "═══╗\n" + visualStringLeft(current.child, current.child, false, tabs+1)+"\n";
+			for(int i = 0; i<tabs; i++) {
+				returned+="║       ";
+			}
+			returned+="║       ";
+		}
+		if((current.left == base && baseAdded) || base.left == base) {
+			return returned;
+		}
+		returned += "\n";
+		for(int i = 0; i<tabs+1; i++) {
+			returned+="║       ";
+		}
+		returned+="\n";
+		
+		return returned + visualStringLeft(current.left, base, true, tabs);
 	}
 	
-	private String printRights(Node current, boolean rootAdded) {
-		if(current==root && rootAdded) {
-			return ""+current.data;
-		}
-		return current.data+"->"+printRights(current.right,true);
-	}
 	private void displaceRoot() {
 		if(root.child == null) {
 			root.left.right = root.right;
@@ -142,10 +159,20 @@ public class FibHeap<E extends Comparable> {
 		root.right.left = root.child.left;
 		root.child.left.right = root.right;
 		root.child.left = root.left;
-		root.child.parent = null;
+		//added stuff
+		root.left.right = root.child;
+		nullifyRootChildren(root.child, root.child, false);
+		root=root.right;
 	}
 
-	
+	private void nullifyRootChildren(Node current, Node base, boolean baseAdded) {
+		current.parent=null;
+		if (current.equals(base) && baseAdded || base == base.right){
+			return;
+		}
+		nullifyRootChildren(current.right, base, true);
+		
+	}
 
 	// This is a utility method to perform merges as part of the fib heap cleanup (happens on every popMin)
 	//must track size during merge
@@ -162,7 +189,8 @@ public class FibHeap<E extends Comparable> {
 		}
 		if(nodesOfDegree[currentNode.degree] != null) {
 			mergeTrees((Node) nodesOfDegree[currentNode.degree], currentNode);
-			mergeHelper(new Object[nodesOfDegree.length], root , false);
+//			System.out.println("The level order after the last merge is:\n" + visualString(root, root, false,0)+"\n\n\n");
+			mergeHelper(new Object[nodesOfDegree.length], root, false);
 		}
 		else {
 			nodesOfDegree[currentNode.degree] = currentNode;
