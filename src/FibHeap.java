@@ -74,7 +74,7 @@ public class FibHeap<E> {
 			System.out.println("We are throwing a null");
 			throw new NullPointerException();
 		}
-		System.out.println("Level order: \n"+visualString(root, root, false,0));
+		System.out.println("Level order before popmin: \n"+visualString(root, root, false,0));
 		System.out.println("The root is " + root.data);
 		System.out.println("The size is " + size+"\n\n");
 		
@@ -110,7 +110,7 @@ public class FibHeap<E> {
 			returned+="║       ";
 		}
 		if((current.right == base && baseAdded) || base.right == base) {
-			return returned;
+			return returned+"base of [" + current.data+","+current.degree+"] is "+current.right.data;
 		}
 		returned += "\n";
 		for(int i = 0; i<tabs+1; i++) {
@@ -167,6 +167,12 @@ public class FibHeap<E> {
 
 	private void nullifyRootChildren(Node current, Node base, boolean baseAdded) {
 		current.parent=null;
+		if(current.equals(base) && baseAdded) {
+			
+		}
+		if(base == base.right) {
+			
+		}
 		if (current.equals(base) && baseAdded || base == base.right){
 			return;
 		}
@@ -189,7 +195,7 @@ public class FibHeap<E> {
 		}
 		if(nodesOfDegree[currentNode.degree] != null) {
 			mergeTrees((Node) nodesOfDegree[currentNode.degree], currentNode);
-//			System.out.println("The level order after the last merge is:\n" + visualString(root, root, false,0)+"\n\n\n");
+			//System.out.println("The level order after the last merge is:\n" + visualString(root, root, false,0)+"\n\n\n");
 			mergeHelper(new Object[nodesOfDegree.length], root, false);
 		}
 		else {
