@@ -74,17 +74,17 @@ public class FibHeap<E> {
 			System.out.println("We are throwing a null");
 			throw new NullPointerException();
 		}
-		System.out.println("Level order before popmin: \n"+visualString(root, root, false,0));
-		System.out.println("The root is " + root.data);
-		System.out.println("The size is " + size+"\n\n");
+//		System.out.println("Level order before popmin: \n"+visualString(root, root, false,0));
+//		System.out.println("The root is " + root.data);
+//		System.out.println("The size is " + size+"\n\n");
 		
 		E minData = root.data;
 		displaceRoot();
 		mergeAll();
 		size--;
 		updateRoot(root,root,false);
-		System.out.println("The level order after popMin is:\n" + visualString(root, root, false,0));
-		System.out.println("The size is " + size+"\n\n");
+//		System.out.println("The level order after popMin is:\n" + visualString(root, root, false,0));
+//		System.out.println("The size is " + size+"\n\n");
 		return minData;
 	}
 	
@@ -152,7 +152,7 @@ public class FibHeap<E> {
 			root.left.right = root.right;
 			root.right.left = root.left;
 			root = root.right;
-			System.out.println("When the root is displaced, it is now " + root.data);
+			//System.out.println("When the root is displaced, it is now " + root.data);
 			return;
 		}
 		root.left.right = root.child;
@@ -237,7 +237,12 @@ public class FibHeap<E> {
 			root = min;
 		}
 	}
-
+	public E peek() {
+		return root.data;
+	}
+	public int peekPriority() {
+		return root.priority;
+	}
 	// decreases the key (useful for Dijkstra's)
 	public void decreaseKey() {
 
