@@ -33,7 +33,10 @@ public class WeightedGraph extends Graph {
 			if (childEdges != null) {
 				for (Edge edge : childEdges) {
 					Node childNode = new Node(edge.getSecondIndex(), currentNode);
-					nodeQueue.push(childNode, polledDistance + ((WeightedEdge) edge).getWeight());
+					if(!nodeQueue.decrease_key(childNode, polledDistance + ((WeightedEdge) edge).getWeight())) {
+						nodeQueue.push(childNode, polledDistance + ((WeightedEdge) edge).getWeight());
+					}
+					
 				}
 			}
 			//Get rid of elements in the Queue that have already been visited

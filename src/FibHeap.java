@@ -52,9 +52,7 @@ public class FibHeap<E> {
 	}
 	
 	public void push(E data, int priority) {
-		if(decrease_key(data, priority)) {
-			return;
-		}
+
 		if(size == 0) {
 			root = new Node(data, priority);
 			size++;
@@ -69,7 +67,7 @@ public class FibHeap<E> {
 		if(root.right.priority < root.priority) {
 			root = root.right;
 		}
-		size++;
+	size++;
 //		System.out.println("Level order after push: \n"+visualString(root, root, false,0)+"\n\n");
 	}
 
