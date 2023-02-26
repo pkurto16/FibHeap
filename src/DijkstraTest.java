@@ -1,10 +1,15 @@
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.Random;
+
 import org.junit.jupiter.api.Test;
 
 class DijkstraTest {
 
 	private static final boolean DEBUG_MODE = false;
+	Random rand = new Random(0);
+	int max = 5000;
+	WeightedGraph testGraphStress = makeNewRandomGraph(max);
 	WeightedGraph testGraph;
 	WeightedGraph testGraph2;
 	WeightedGraph testGraph3;
@@ -19,7 +24,89 @@ class DijkstraTest {
 
 	};
 	WeightedEdge[] edges3 = { new WeightedEdge(1, 2, 1), new WeightedEdge(2, 1, 1), new WeightedEdge(1, 3, 300) };
-
+	
+	WeightedEdge[] edgesStress = { new WeightedEdge(1, 2, 2), new WeightedEdge(1, 3, 3), new WeightedEdge(1, 4, 1),
+			new WeightedEdge(1, 5, 3), new WeightedEdge(2, 3, 1), new WeightedEdge(2, 4, 3), new WeightedEdge(2, 5, 2),
+			new WeightedEdge(2, 6, 1), new WeightedEdge(3, 4, 2), new WeightedEdge(3, 5, 2), new WeightedEdge(3, 6, 2),
+			new WeightedEdge(3, 7, 1), new WeightedEdge(4, 5, 1), new WeightedEdge(4, 6, 3), new WeightedEdge(4, 7, 2),
+			new WeightedEdge(4, 8, 3), new WeightedEdge(5, 6, 3), new WeightedEdge(5, 7, 2), new WeightedEdge(5, 8, 1),
+			new WeightedEdge(5, 9, 2), new WeightedEdge(6, 7, 1), new WeightedEdge(6, 8, 2), new WeightedEdge(6, 9, 3),
+			new WeightedEdge(6, 10, 2), new WeightedEdge(7, 8, 2), new WeightedEdge(7, 9, 1),
+			new WeightedEdge(7, 10, 3), new WeightedEdge(7, 11, 2), new WeightedEdge(8, 9, 2),
+			new WeightedEdge(8, 10, 1), new WeightedEdge(8, 11, 3), new WeightedEdge(8, 12, 2),
+			new WeightedEdge(9, 10, 3), new WeightedEdge(9, 11, 2), new WeightedEdge(9, 12, 1),
+			new WeightedEdge(9, 13, 2), new WeightedEdge(10, 11, 1), new WeightedEdge(10, 12, 3),
+			new WeightedEdge(10, 13, 2), new WeightedEdge(10, 14, 3), new WeightedEdge(11, 12, 2),
+			new WeightedEdge(11, 13, 1), new WeightedEdge(11, 14, 2), new WeightedEdge(11, 15, 3),
+			new WeightedEdge(12, 13, 3), new WeightedEdge(12, 14, 2), new WeightedEdge(12, 15, 1),
+			new WeightedEdge(12, 16, 2), new WeightedEdge(13, 14, 1), new WeightedEdge(13, 15, 2),
+			new WeightedEdge(13, 16, 3), new WeightedEdge(13, 17, 2), new WeightedEdge(14, 15, 3),
+			new WeightedEdge(14, 16, 2), new WeightedEdge(14, 17, 1), new WeightedEdge(14, 18, 2),
+			new WeightedEdge(15, 16, 1), new WeightedEdge(15, 17, 3), new WeightedEdge(15, 18, 2),
+			new WeightedEdge(15, 19, 3), new WeightedEdge(16, 17, 2), new WeightedEdge(16, 18, 1),
+			new WeightedEdge(16, 19, 2), new WeightedEdge(16, 20, 3), new WeightedEdge(17, 18, 3),
+			new WeightedEdge(17, 19, 2), new WeightedEdge(25, 22, 3), new WeightedEdge(22, 27, 4),
+			new WeightedEdge(27, 24, 2), new WeightedEdge(24, 23, 1), new WeightedEdge(23, 20, 3),
+			new WeightedEdge(20, 21, 2), new WeightedEdge(21, 18, 4), new WeightedEdge(18, 19, 1),
+			new WeightedEdge(19, 16, 3), new WeightedEdge(16, 17, 2), new WeightedEdge(17, 34, 4),
+			new WeightedEdge(34, 31, 2), new WeightedEdge(31, 30, 1), new WeightedEdge(30, 29, 3),
+			new WeightedEdge(29, 26, 2), new WeightedEdge(26, 33, 4), new WeightedEdge(33, 38, 1),
+			new WeightedEdge(38, 39, 2), new WeightedEdge(39, 37, 3), new WeightedEdge(37, 36, 4),
+			new WeightedEdge(36, 35, 1), new WeightedEdge(35, 32, 3), new WeightedEdge(32, 40, 2),
+			new WeightedEdge(40, 28, 4), new WeightedEdge(28, 25, 1), new WeightedEdge(22, 25, 3),
+			new WeightedEdge(27, 22, 4), new WeightedEdge(24, 27, 2), new WeightedEdge(23, 24, 1),
+			new WeightedEdge(20, 23, 3), new WeightedEdge(21, 20, 2), new WeightedEdge(18, 21, 4),
+			new WeightedEdge(19, 18, 1), new WeightedEdge(16, 19, 3), new WeightedEdge(17, 16, 2),
+			new WeightedEdge(34, 17, 4), new WeightedEdge(31, 34, 2), new WeightedEdge(30, 31, 1),
+			new WeightedEdge(29, 30, 3), new WeightedEdge(26, 29, 2), new WeightedEdge(33, 26, 4),
+			new WeightedEdge(38, 33, 1), new WeightedEdge(39, 38, 2), new WeightedEdge(37, 39, 3),
+			new WeightedEdge(36, 37, 4), new WeightedEdge(35, 36, 1), new WeightedEdge(32, 35, 3),
+			new WeightedEdge(40, 32, 2), new WeightedEdge(28, 40, 4), new WeightedEdge(25, 28, 1),
+			new WeightedEdge(22, 24, 3), new WeightedEdge(27, 23, 4), new WeightedEdge(24, 20, 2),
+			new WeightedEdge(23, 21, 1), new WeightedEdge(20, 18, 3), new WeightedEdge(21, 19, 2),
+			new WeightedEdge(18, 16, 4), new WeightedEdge(19, 17, 1), new WeightedEdge(16, 34, 3),
+			new WeightedEdge(17, 31, 2), new WeightedEdge(34, 30, 4), new WeightedEdge(31, 29, 1),
+			new WeightedEdge(30, 26, 3), new WeightedEdge(29, 33, 2), new WeightedEdge(26, 38, 4),
+			new WeightedEdge(33, 39, 1), new WeightedEdge(38, 37, 3), new WeightedEdge(39, 36, 2),
+			new WeightedEdge(36, 35, 1), new WeightedEdge(35, 32, 3), new WeightedEdge(32, 40, 2),
+			new WeightedEdge(40, 28, 4), new WeightedEdge(28, 25, 1), new WeightedEdge(22, 25, 3),
+			new WeightedEdge(27, 22, 4), new WeightedEdge(24, 27, 2), new WeightedEdge(23, 24, 1),
+			new WeightedEdge(20, 23, 3), new WeightedEdge(21, 20, 2), new WeightedEdge(18, 21, 4),
+			new WeightedEdge(19, 18, 1), new WeightedEdge(16, 19, 3), new WeightedEdge(17, 16, 2),
+			new WeightedEdge(34, 17, 4), new WeightedEdge(31, 34, 2), new WeightedEdge(30, 31, 1),
+			new WeightedEdge(29, 30, 3), new WeightedEdge(26, 29, 2), new WeightedEdge(33, 26, 4),
+			new WeightedEdge(38, 33, 1), new WeightedEdge(39, 38, 2), new WeightedEdge(37, 39, 3),
+			new WeightedEdge(36, 37, 4), new WeightedEdge(35, 36, 1), new WeightedEdge(32, 35, 3),
+			new WeightedEdge(40, 32, 2), new WeightedEdge(28, 40, 4), new WeightedEdge(25, 28, 1),
+			new WeightedEdge(22, 24, 3), new WeightedEdge(27, 23, 4), new WeightedEdge(24, 20, 2),
+			new WeightedEdge(23, 21, 1), new WeightedEdge(20, 18, 3), new WeightedEdge(21, 19, 2),
+			new WeightedEdge(18, 16, 4), new WeightedEdge(19, 17, 1), new WeightedEdge(16, 34, 3),
+			new WeightedEdge(17, 31, 2), new WeightedEdge(34, 30, 4), new WeightedEdge(31, 29, 1),
+			new WeightedEdge(30, 26, 3), new WeightedEdge(29, 33, 2), new WeightedEdge(26, 38, 4),
+			new WeightedEdge(33, 39, 1), new WeightedEdge(38, 37, 3), new WeightedEdge(39, 36, 2),
+			new WeightedEdge(37, 35, 4), new WeightedEdge(35, 40, 3), new WeightedEdge(40, 26, 2),
+			new WeightedEdge(26, 19, 4), new WeightedEdge(19, 23, 3), new WeightedEdge(23, 34, 1),
+			new WeightedEdge(34, 21, 2), new WeightedEdge(21, 27, 4), new WeightedEdge(27, 18, 1),
+			new WeightedEdge(18, 36, 3), new WeightedEdge(36, 30, 2), new WeightedEdge(30, 39, 4),
+			new WeightedEdge(39, 22, 3), new WeightedEdge(22, 37, 1), new WeightedEdge(37, 24, 2),
+			new WeightedEdge(24, 31, 4), new WeightedEdge(31, 16, 3), new WeightedEdge(16, 29, 1),
+			new WeightedEdge(29, 25, 2), new WeightedEdge(12, 15, 3), new WeightedEdge(15, 18, 2),
+			new WeightedEdge(16, 19, 4), new WeightedEdge(17, 20, 2), new WeightedEdge(19, 22, 3),
+			new WeightedEdge(20, 23, 1), new WeightedEdge(21, 24, 3), new WeightedEdge(22, 25, 4),
+			new WeightedEdge(23, 26, 2), new WeightedEdge(25, 28, 2), new WeightedEdge(26, 29, 3),
+			new WeightedEdge(27, 30, 1), new WeightedEdge(28, 31, 4), new WeightedEdge(29, 32, 3),
+			new WeightedEdge(30, 33, 2), new WeightedEdge(32, 35, 1), new WeightedEdge(33, 36, 2),
+			new WeightedEdge(34, 37, 3), new WeightedEdge(35, 38, 4), new WeightedEdge(36, 39, 2),
+			new WeightedEdge(38, 40, 3), new WeightedEdge(12, 16, 1), new WeightedEdge(15, 17, 3),
+			new WeightedEdge(16, 18, 2), new WeightedEdge(17, 19, 4), new WeightedEdge(18, 20, 1),
+			new WeightedEdge(19, 21, 3), new WeightedEdge(20, 22, 2), new WeightedEdge(21, 23, 1),
+			new WeightedEdge(22, 24, 4), new WeightedEdge(23, 25, 3), new WeightedEdge(24, 26, 1),
+			new WeightedEdge(25, 27, 2), new WeightedEdge(26, 28, 4), new WeightedEdge(27, 29, 2),
+			new WeightedEdge(28, 30, 1), new WeightedEdge(29, 31, 3), new WeightedEdge(30, 32, 2),
+			new WeightedEdge(31, 33, 1), new WeightedEdge(32, 34, 3), new WeightedEdge(33, 35, 2),
+			new WeightedEdge(34, 36, 1), new WeightedEdge(35, 37, 4), new WeightedEdge(36, 38, 3),
+			new WeightedEdge(37, 39, 1), new WeightedEdge(38, 40, 2) };
+	
 	WeightedEdge[] edgesRandom = {
 
 			new WeightedEdge(1, 2, 5), new WeightedEdge(1, 4, 8), new WeightedEdge(1, 10, 6), new WeightedEdge(2, 3, 2),
@@ -57,13 +144,39 @@ class DijkstraTest {
 			new WeightedEdge(93, 94, 5), new WeightedEdge(94, 95, 4), new WeightedEdge(95, 96, 7),
 			new WeightedEdge(96, 97, 8), new WeightedEdge(97, 98, 9), new WeightedEdge(98, 99, 5),
 			new WeightedEdge(99, 100, 2) };
-			@Test
+	@Test
 	
 	void randomTest(){
 		testGraph = new WeightedGraph(edgesRandom);
-		System.out.println(testGraph.shortestPath(1, 99));
+		System.out.println(testGraph.shortestPath(1, 12));
 	}
-
+	@Test
+	void stressTest(){
+		System.out.println("Path is " + testGraphStress.pathTaken(1, max));
+		testGraphStress.pathTaken(1, max);
+	}
+	
+	private WeightedGraph makeNewRandomGraph(int max) {
+		WeightedGraph g = new WeightedGraph(null);
+		int i = 0;
+		while(i<max) {
+			g.addEdge(new WeightedEdge(i,i+1,(int)((1+Math.sqrt(max)/3)*Math.random())));
+			if(Math.random()>0.4) {
+				g.addEdge(new WeightedEdge(i+1,i,(int)((1+Math.sqrt(max)/3)*Math.random())));
+			}
+			
+			for(int j = 0; j<(int)(1+Math.sqrt(max)/6); j++) {
+				int randIndex = i+(int)(max/50*Math.random());
+				g.addEdge(new WeightedEdge(i,randIndex,(int)((1+Math.sqrt(max)/3)*Math.random())));
+				if(Math.random()>0.4) {
+					g.addEdge(new WeightedEdge(randIndex,i,(int)((1+Math.sqrt(max)/3)*Math.random())));
+				}
+			}
+			i++;
+		}
+		return g;
+	}
+	
 	@Test
 	void test1to12() {
 		if (DEBUG_MODE) {

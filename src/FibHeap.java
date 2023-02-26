@@ -1,10 +1,11 @@
 //We have to track the size when we merge (not when we add)
 public class FibHeap<E> {
-
+	Node found = null;
+	
 	public class Node {
 		E data;
 		int priority;
-		int lossCount = 0;
+		boolean loser = false;
 		int degree = 0;
 		Node parent;
 		Node left;
@@ -51,6 +52,9 @@ public class FibHeap<E> {
 	}
 	
 	public void push(E data, int priority) {
+		if(decrease_key(data, priority)) {
+			return;
+		}
 		if(size == 0) {
 			root = new Node(data, priority);
 			size++;
@@ -66,6 +70,7 @@ public class FibHeap<E> {
 			root = root.right;
 		}
 		size++;
+//		System.out.println("Level order after push: \n"+visualString(root, root, false,0)+"\n\n");
 	}
 
 	// pops off the root
@@ -83,7 +88,7 @@ public class FibHeap<E> {
 		mergeAll();
 		size--;
 		updateRoot(root,root,false);
-//		System.out.println("The level order after popMin is:\n" + visualString(root, root, false,0));
+//		System.out.println("The level order after popMin is:\n" + visualString(root, root, false,0)+"\n\n");
 //		System.out.println("The size is " + size+"\n\n");
 		return minData;
 	}
@@ -95,56 +100,37 @@ public class FibHeap<E> {
 		}
 		updateRoot(current.right, base, true);
 	}
-
+	public String visualString() {
+		return visualString(root,root,false,0);
+	}
 	private String visualString(Node current, Node base, boolean baseAdded, int tabs) {
 		String returned = "";
 		for(int i = 0; i<tabs; i++) {
-			returned+="║       ";
+			returned+="║                             ";
 		}
-		returned += "["+current.data +","+ current.degree+"]";
+		returned += "["+current.priority;
+		returned+= current.left==null ? ", NL" : ", L:"+current.left.priority;
+		returned+= current.right==null ? ", NR" : ", R:"+current.right.priority;
+		returned+= current.parent==null ? ", NP" : ", P:"+current.parent.priority;
+		returned+= current.child==null ? ", NC" : ", C:"+current.child.priority;
+		returned += ", D:"+ current.degree+"]";
 		if(current.child != null) {
 			returned += "═══╗\n" + visualString(current.child, current.child, false, tabs+1)+"\n";
 			for(int i = 0; i<tabs; i++) {
-				returned+="║       ";
+				returned+="║                             ";
 			}
-			returned+="║       ";
+			returned+="║                             ";
 		}
 		if((current.right == base && baseAdded) || base.right == base) {
-			return returned+"base of [" + current.data+","+current.degree+"] is "+current.right.data;
-		}
-		returned += "\n";
-		for(int i = 0; i<tabs+1; i++) {
-			returned+="║       ";
-		}
-		returned+="\n";
-		
-		return returned + visualString(current.right, base, true, tabs);
-	}
-	
-	
-	private String visualStringLeft(Node current, Node base, boolean baseAdded, int tabs) {
-		String returned = "";
-		for(int i = 0; i<tabs; i++) {
-			returned+="║       ";
-		}
-		returned += "["+current.data +","+ current.degree+"]";
-		if(current.child != null) {
-			returned += "═══╗\n" + visualStringLeft(current.child, current.child, false, tabs+1)+"\n";
-			for(int i = 0; i<tabs; i++) {
-				returned+="║       ";
-			}
-			returned+="║       ";
-		}
-		if((current.left == base && baseAdded) || base.left == base) {
 			return returned;
 		}
 		returned += "\n";
 		for(int i = 0; i<tabs+1; i++) {
-			returned+="║       ";
+			returned+="║                             ";
 		}
 		returned+="\n";
 		
-		return returned + visualStringLeft(current.left, base, true, tabs);
+		return returned + visualString(current.right, base, true, tabs);
 	}
 	
 	private void displaceRoot() {
@@ -157,8 +143,15 @@ public class FibHeap<E> {
 		}
 		root.left.right = root.child;
 		root.right.left = root.child.left;
-		root.child.left.right = root.right;
-		root.child.left = root.left;
+		if(root.right!=root && root.left!=root) {
+			root.child.left.right = root.right;
+			root.child.left = root.left;
+		}
+		else {
+			fixRootChildren(root.child, root.child, false, root.child);
+			return;
+		}
+		
 		//added stuff
 		root.left.right = root.child;
 		nullifyRootChildren(root.child, root.child, false);
@@ -167,16 +160,31 @@ public class FibHeap<E> {
 
 	private void nullifyRootChildren(Node current, Node base, boolean baseAdded) {
 		current.parent=null;
-		if(current.equals(base) && baseAdded) {
-			
-		}
-		if(base == base.right) {
-			
-		}
 		if (current.equals(base) && baseAdded || base == base.right){
 			return;
 		}
 		nullifyRootChildren(current.right, base, true);
+		
+	}
+	
+	private void fixRootChildren(Node current, Node base, boolean baseAdded, Node min) {
+		current.parent=null;
+		if (current.equals(base) && baseAdded || base == base.right){
+			if(current.priority<min.priority) {
+				root = current;
+			}
+			else {
+				root = min;
+			}
+			
+			return;
+		}
+		if(current.priority<min.priority) {
+			fixRootChildren(current.right, base, true, current);
+		}
+		else {
+			fixRootChildren(current.right, base, true, min);
+		}
 		
 	}
 
@@ -188,7 +196,7 @@ public class FibHeap<E> {
 		mergeHelper(nodesOfDegree, root, false);
 	}
 	
-	//this.getValue == BAD
+
 	private void mergeHelper(Object[] nodesOfDegree, Node currentNode, boolean rootIsAdded) {
 		if ((currentNode.equals(root) && rootIsAdded) || root.right.equals(root)) {
 			return;
@@ -243,13 +251,74 @@ public class FibHeap<E> {
 	public int peekPriority() {
 		return root.priority;
 	}
-	// decreases the key (useful for Dijkstra's)
-	public void decreaseKey() {
-
+	
+	public Node find(E k) {
+		    found = null;
+		    find(k, root);
+		    return found;
 	}
+	// Search operation
+	  private void find(E key, Node c) {
+	    if (found != null || c == null)
+	      return;
+	    else {
+	      Node temp = c;
+	      do {
+	        if (key == temp.data)
+	          found = temp;
+	        else {
+	          Node k = temp.child;
+	          find(key, k);
+	          temp = temp.right;
+	        }
+	      } while (temp != c && found == null);
+	    }
+	  }
 
-	// This method adjusts the heap based on if a node is a loser after a popMin
-	private void shuffleHeap() {
-		
-	}
+	  public boolean decrease_key(E key, int nval) {
+	    Node x = find(key);
+	    return decrease_key(x, nval);
+	  }
+
+	  // Decrease key operation
+	  private boolean decrease_key(Node x, int k) {
+	    if (k > x.priority)
+	      return false;
+	    x.priority = k;
+	    Node y = x.parent;
+	    if (y != null && x.priority < y.priority) {
+	      cut(x, y);
+	      cascading_cut(y);
+	    }
+	    if (x.priority < root.priority) {
+	    	root = x;
+	    }
+	    return true;
+	  }
+
+	  // Cut operation
+	  private void cut(Node x, Node y) {
+	    x.right.left=x.left;
+	    x.left.right=x.right;
+
+	    y.degree--;
+
+	    x.right=null;
+	    x.left=null;
+	    push(x.data,x.priority);
+	    x.parent=null;
+	    x.loser = false;
+	  }
+
+	  private void cascading_cut(Node y) {
+	    Node z = y.parent;
+	    if (z != null) {
+	      if (y.loser == false)
+	        y.loser = true;
+	      else {
+	        cut(y, z);
+	        cascading_cut(z);
+	      }
+	    }
+	  }
 }

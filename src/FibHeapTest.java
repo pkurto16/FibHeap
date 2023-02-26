@@ -1,9 +1,12 @@
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.Random;
+import java.util.random.RandomGenerator;
+
 import org.junit.jupiter.api.Test;
 
 class FibHeapTest {
-	static final int STRESS_TEST_NUM = 9;
+	static final int STRESS_TEST_NUM = 1400;
 	@Test
 	void test() {
 		FibHeap<Integer> heap = new FibHeap<Integer>();
@@ -25,16 +28,14 @@ class FibHeapTest {
 	
 	@Test
 	void stressTest() {
+		Random random = new Random(0);
 		System.out.println(STRESS_TEST_NUM);
 		FibHeap<Integer> heap = new FibHeap<Integer>();
 		System.out.println("\n\n\nSTRESS TEST:");
 		for(int i = 0; i < STRESS_TEST_NUM; i++) {
-			int rand = (int)(1 + Math.random() * STRESS_TEST_NUM);
+			int rand = (int)(1 + random.nextDouble() * STRESS_TEST_NUM);
 			heap.push(rand, rand);
 			System.out.println("random number is " + rand);
-			if(i % 5 == 0) {
-				//System.out.println(heap.popMin());
-			}
 		}
 		int curr = 0;
 		for(int i = 0; i< heap.size; i++) {
@@ -100,13 +101,15 @@ class FibHeapTest {
 		heap.push(5, 5);
 		heap.push(9, 9);
 		int curr = 0;
-		for(int i = 0; i< 2;i++){//heap.size; i++) {
+		//for(int i = 0; i< 2;i++){//heap.size; i++) {
+		//	int next = heap.popMin();
+		//	System.out.println("The next is " + next);
+		//	assertTrue(next >= curr);
+		//	curr = next;
+		//}
+		for(int i = 0; i < 7;i++){//heap.size; i++) {
 			int next = heap.popMin();
-			assertTrue(next >= curr);
-			curr = next;
-		}
-		for(int i = 0; i< 7;i++){//heap.size; i++) {
-			int next = heap.popMin();
+			System.out.println("The next is " + next);
 			assertTrue(next >= curr);
 			curr = next;
 		}
