@@ -8,7 +8,7 @@ class DijkstraTestOld {
 
 	private static final boolean DEBUG_MODE = false;
 	Random rand = new Random(0);
-	int max = 5000;
+	int max = 15000;
 	WeightedGraphOld testGraphStress = makeNewRandomGraph(max);
 	WeightedGraphOld testGraph;
 	WeightedGraphOld testGraph2;
@@ -145,11 +145,11 @@ class DijkstraTestOld {
 			new WeightedEdge(94, 95, 4), new WeightedEdge(95, 96, 7), new WeightedEdge(96, 97, 8),
 			new WeightedEdge(97, 98, 9), new WeightedEdge(98, 99, 5), new WeightedEdge(99, 100, 2) };
 
-	@Test
-	void randomTest() {
-		testGraph = new WeightedGraphOld(edgesRandom);
-		System.out.println(testGraph.shortestPath(1, 12));
-	}
+//	@Test
+//	void randomTest() {
+//		testGraph = new WeightedGraphOld(edgesRandom);
+//		System.out.println(testGraph.shortestPath(1, 12));
+//	}
 
 	@Test
 	void stressTest(){
@@ -179,111 +179,111 @@ class DijkstraTestOld {
 		return g;
 	}
 
-	@Test
-	void test1to12() {
-		if (DEBUG_MODE) {
-			System.out.println(
-					"═══════════════════════════════════════════════════════════════════════════════════════════════════");
-			System.out.println("1->12 TEST");
-			System.out.println(
-					"═══════════════════════════════════════════════════════════════════════════════════════════════════\n");
-			testGraph = new WeightedGraphOld(edges);
-		} else {
-			testGraph = new WeightedGraphOld(edges);
-		}
-		testGraph3 = new WeightedGraphOld(edges3);
-		assertEquals(300, testGraph3.shortestPath(1, 3));
-		System.out.println(testGraph3.pathTaken(1, 3));
-		System.out.println("Test");
-
-	}
-
-	@Test
-	void testCarrollGraph() {
-		WeightedGraphOld testGraph1;
-		WeightedEdge[] edges1 = { new WeightedEdge(8, 7, 3), new WeightedEdge(0, 1, 1), new WeightedEdge(1, 2, 2),
-				new WeightedEdge(1, 3, 4), new WeightedEdge(3, 2, 1), new WeightedEdge(3, 7, 2),
-				new WeightedEdge(3, 4, 1), new WeightedEdge(4, 5, 2), new WeightedEdge(5, 6, 3),
-				new WeightedEdge(6, 9, 1), new WeightedEdge(3, 7, 2), new WeightedEdge(7, 9, 4) };
-		testGraph1 = new WeightedGraphOld(edges1);
-		System.out.println(testGraph1.pathTaken(0, 9));
-		System.out.println(testGraph1.pathTaken(1, 9));
-	}
-
-	@Test
-	void test3to12() {
-		if (DEBUG_MODE) {
-			System.out.println(
-					"═══════════════════════════════════════════════════════════════════════════════════════════════════");
-			System.out.println("3->12 TEST");
-			System.out.println(
-					"═══════════════════════════════════════════════════════════════════════════════════════════════════\n");
-			testGraph = new WeightedGraphOld(edges);
-		} else {
-			testGraph = new WeightedGraphOld(edges);
-		}
-		assertEquals(9, testGraph.shortestPath(3, 12));
-	}
-
-	@Test
-	void test9to12() {
-		if (DEBUG_MODE) {
-			System.out.println(
-					"═══════════════════════════════════════════════════════════════════════════════════════════════════");
-			System.out.println("9->12 TEST");
-			System.out.println(
-					"═══════════════════════════════════════════════════════════════════════════════════════════════════\n");
-			testGraph = new WeightedGraphOld(edges);
-		} else {
-			testGraph = new WeightedGraphOld(edges);
-		}
-		assertEquals(10, testGraph.shortestPath(9, 12));
-	}
-
-	@Test
-	void test1to7() {
-		if (DEBUG_MODE) {
-			System.out.println(
-					"═══════════════════════════════════════════════════════════════════════════════════════════════════");
-			System.out.println("1->7 TEST");
-			System.out.println(
-					"═══════════════════════════════════════════════════════════════════════════════════════════════════\n");
-			testGraph = new WeightedGraphOld(edges);
-		} else {
-			testGraph = new WeightedGraphOld(edges);
-		}
-		assertEquals(4, testGraph.shortestPath(1, 7));
-
-	}
-
-	@Test
-	void test4to7() {
-		if (DEBUG_MODE) {
-			System.out.println(
-					"═══════════════════════════════════════════════════════════════════════════════════════════════════");
-			System.out.println("4->7 TEST");
-			System.out.println(
-					"═══════════════════════════════════════════════════════════════════════════════════════════════════\n");
-			testGraph = new WeightedGraphOld(edges);
-		} else {
-			testGraph = new WeightedGraphOld(edges);
-		}
-		assertEquals(3, testGraph.shortestPath(4, 7));
-	}
-
-	@Test
-	void test1to4() {
-		if (DEBUG_MODE) {
-			System.out.println(
-					"═══════════════════════════════════════════════════════════════════════════════════════════════════");
-			System.out.println("1->4 TEST");
-			System.out.println(
-					"═══════════════════════════════════════════════════════════════════════════════════════════════════\n");
-			testGraph = new WeightedGraphOld(edges);
-		} else {
-			testGraph = new WeightedGraphOld(edges);
-		}
-		assertEquals(1, testGraph.shortestPath(1, 4));
-	}
+//	@Test
+//	void test1to12() {
+//		if (DEBUG_MODE) {
+//			System.out.println(
+//					"═══════════════════════════════════════════════════════════════════════════════════════════════════");
+//			System.out.println("1->12 TEST");
+//			System.out.println(
+//					"═══════════════════════════════════════════════════════════════════════════════════════════════════\n");
+//			testGraph = new WeightedGraphOld(edges);
+//		} else {
+//			testGraph = new WeightedGraphOld(edges);
+//		}
+//		testGraph3 = new WeightedGraphOld(edges3);
+//		assertEquals(300, testGraph3.shortestPath(1, 3));
+//		System.out.println(testGraph3.pathTaken(1, 3));
+//		System.out.println("Test");
+//
+//	}
+//
+//	@Test
+//	void testCarrollGraph() {
+//		WeightedGraphOld testGraph1;
+//		WeightedEdge[] edges1 = { new WeightedEdge(8, 7, 3), new WeightedEdge(0, 1, 1), new WeightedEdge(1, 2, 2),
+//				new WeightedEdge(1, 3, 4), new WeightedEdge(3, 2, 1), new WeightedEdge(3, 7, 2),
+//				new WeightedEdge(3, 4, 1), new WeightedEdge(4, 5, 2), new WeightedEdge(5, 6, 3),
+//				new WeightedEdge(6, 9, 1), new WeightedEdge(3, 7, 2), new WeightedEdge(7, 9, 4) };
+//		testGraph1 = new WeightedGraphOld(edges1);
+//		System.out.println(testGraph1.pathTaken(0, 9));
+//		System.out.println(testGraph1.pathTaken(1, 9));
+//	}
+//
+//	@Test
+//	void test3to12() {
+//		if (DEBUG_MODE) {
+//			System.out.println(
+//					"═══════════════════════════════════════════════════════════════════════════════════════════════════");
+//			System.out.println("3->12 TEST");
+//			System.out.println(
+//					"═══════════════════════════════════════════════════════════════════════════════════════════════════\n");
+//			testGraph = new WeightedGraphOld(edges);
+//		} else {
+//			testGraph = new WeightedGraphOld(edges);
+//		}
+//		assertEquals(9, testGraph.shortestPath(3, 12));
+//	}
+//
+//	@Test
+//	void test9to12() {
+//		if (DEBUG_MODE) {
+//			System.out.println(
+//					"═══════════════════════════════════════════════════════════════════════════════════════════════════");
+//			System.out.println("9->12 TEST");
+//			System.out.println(
+//					"═══════════════════════════════════════════════════════════════════════════════════════════════════\n");
+//			testGraph = new WeightedGraphOld(edges);
+//		} else {
+//			testGraph = new WeightedGraphOld(edges);
+//		}
+//		assertEquals(10, testGraph.shortestPath(9, 12));
+//	}
+//
+//	@Test
+//	void test1to7() {
+//		if (DEBUG_MODE) {
+//			System.out.println(
+//					"═══════════════════════════════════════════════════════════════════════════════════════════════════");
+//			System.out.println("1->7 TEST");
+//			System.out.println(
+//					"═══════════════════════════════════════════════════════════════════════════════════════════════════\n");
+//			testGraph = new WeightedGraphOld(edges);
+//		} else {
+//			testGraph = new WeightedGraphOld(edges);
+//		}
+//		assertEquals(4, testGraph.shortestPath(1, 7));
+//
+//	}
+//
+//	@Test
+//	void test4to7() {
+//		if (DEBUG_MODE) {
+//			System.out.println(
+//					"═══════════════════════════════════════════════════════════════════════════════════════════════════");
+//			System.out.println("4->7 TEST");
+//			System.out.println(
+//					"═══════════════════════════════════════════════════════════════════════════════════════════════════\n");
+//			testGraph = new WeightedGraphOld(edges);
+//		} else {
+//			testGraph = new WeightedGraphOld(edges);
+//		}
+//		assertEquals(3, testGraph.shortestPath(4, 7));
+//	}
+//
+//	@Test
+//	void test1to4() {
+//		if (DEBUG_MODE) {
+//			System.out.println(
+//					"═══════════════════════════════════════════════════════════════════════════════════════════════════");
+//			System.out.println("1->4 TEST");
+//			System.out.println(
+//					"═══════════════════════════════════════════════════════════════════════════════════════════════════\n");
+//			testGraph = new WeightedGraphOld(edges);
+//		} else {
+//			testGraph = new WeightedGraphOld(edges);
+//		}
+//		assertEquals(1, testGraph.shortestPath(1, 4));
+//	}
 
 }

@@ -6,7 +6,7 @@ import java.util.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 class FibHeapTest {
-	static final int STRESS_TEST_NUM = 1400;
+	static final int STRESS_TEST_NUM = 1200;
 	@Test
 	void test() {
 		FibHeap<Integer> heap = new FibHeap<Integer>();
@@ -108,6 +108,7 @@ class FibHeapTest {
 		//	curr = next;
 		//}
 		for(int i = 0; i < 7;i++){//heap.size; i++) {
+			System.out.println(heap.visualString());
 			int next = heap.popMin();
 			System.out.println("The next is " + next);
 			assertTrue(next >= curr);

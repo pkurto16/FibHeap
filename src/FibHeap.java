@@ -52,7 +52,6 @@ public class FibHeap<E> {
 	}
 	
 	public void push(E data, int priority) {
-
 		if(size == 0) {
 			root = new Node(data, priority);
 			size++;
@@ -67,7 +66,7 @@ public class FibHeap<E> {
 		if(root.right.priority < root.priority) {
 			root = root.right;
 		}
-	size++;
+		size++;
 //		System.out.println("Level order after push: \n"+visualString(root, root, false,0)+"\n\n");
 	}
 
@@ -91,6 +90,113 @@ public class FibHeap<E> {
 		return minData;
 	}
 	
+	private void displaceRoot() {
+		if(root.child == null) {
+			root.left.right = root.right;
+			root.right.left = root.left;
+			root = root.right;
+			//System.out.println("When the root is displaced, it is now " + root.data);
+			return;
+		}
+		root.left.right = root.child;
+		root.right.left = root.child.left;
+		if(root.right!=root && root.left!=root) {
+			root.child.left.right = root.right;
+			root.child.left = root.left;
+		}
+		else {
+			fixRootChildren(root.child, root.child, false, root.child);
+			return;
+		}
+		
+		//added stuff
+		root.left.right = root.child;
+		nullifyRootChildren(root.child, root.child, false);
+		root = root.right;
+	}
+	
+	private void nullifyRootChildren(Node current, Node base, boolean baseAdded) {
+		current.parent = null;
+		if (current.equals(base) && baseAdded || base == base.right){
+			return;
+		}
+		nullifyRootChildren(current.right, base, true);
+		
+	}
+	
+	private void fixRootChildren(Node current, Node base, boolean baseAdded, Node min) {
+		current.parent=null;
+		if (current.equals(base) && baseAdded || base == base.right){
+			if(current.priority<min.priority) {
+				root = current;
+			}else {
+				root = min;
+			}
+			
+			return;
+		}
+		if(current.priority<min.priority) {
+			fixRootChildren(current.right, base, true, current);
+		}else {
+			fixRootChildren(current.right, base, true, min);
+		}
+	}
+	
+	private void mergeAll() {
+		Object[] nodesOfDegree = new Object[(int)( Math.log(size) / Math.log(1.618)) + 1];
+		mergeHelper(nodesOfDegree, root, false);
+	}
+	
+	// This is a utility method to perform merges as part of the fib heap cleanup (happens on every popMin)
+	//must track size during merge
+
+	private void mergeHelper(Object[] nodesOfDegree, Node currentNode, boolean rootIsAdded) {
+		if ((currentNode.equals(root) && rootIsAdded) || root.right.equals(root)) {
+			return;
+		}
+		if(nodesOfDegree[currentNode.degree] != null) {
+			mergeTrees((Node) nodesOfDegree[currentNode.degree], currentNode);
+			//System.out.println("The level order after the last merge is:\n" + visualString(root, root, false,0)+"\n\n\n");
+			mergeHelper(new Object[nodesOfDegree.length], root, false);
+		} else {
+			nodesOfDegree[currentNode.degree] = currentNode;
+			mergeHelper(nodesOfDegree, currentNode.right, true);
+		}
+	}
+	
+	private void mergeTrees(Node n1, Node n2){
+		if(n1.priority > n2.priority) {
+			mergeOrderedTrees(n2, n1);
+		} else {
+			mergeOrderedTrees(n1, n2);
+		}
+	}
+	
+	private void mergeOrderedTrees(Node min, Node newChild) {
+		newChild.right.left = newChild.left;
+		newChild.left.right = newChild.right;
+		if(min.child == null){
+			min.child = newChild;
+			newChild.right = newChild;
+			newChild.left = newChild;
+			newChild.parent = min;
+			min.degree++;
+			if(newChild.equals(root)) {
+				root = min;
+			}
+			return;
+		}
+		newChild.right = min.child;
+		newChild.left = min.child.left;
+		min.child.left.right = newChild;
+		min.child.left = newChild;
+		newChild.parent = min;
+		min.degree++;
+		if(newChild.equals(root)) {
+			root = min;
+		}
+	}
+	
 	private void updateRoot(Node current, Node base, boolean rootAdded) {
 		if(current.priority < root.priority) root = current;
 		if (current.equals(base) && rootAdded){
@@ -98,6 +204,7 @@ public class FibHeap<E> {
 		}
 		updateRoot(current.right, base, true);
 	}
+	
 	public String visualString() {
 		return visualString(root,root,false,0);
 	}
@@ -131,118 +238,6 @@ public class FibHeap<E> {
 		return returned + visualString(current.right, base, true, tabs);
 	}
 	
-	private void displaceRoot() {
-		if(root.child == null) {
-			root.left.right = root.right;
-			root.right.left = root.left;
-			root = root.right;
-			//System.out.println("When the root is displaced, it is now " + root.data);
-			return;
-		}
-		root.left.right = root.child;
-		root.right.left = root.child.left;
-		if(root.right!=root && root.left!=root) {
-			root.child.left.right = root.right;
-			root.child.left = root.left;
-		}
-		else {
-			fixRootChildren(root.child, root.child, false, root.child);
-			return;
-		}
-		
-		//added stuff
-		root.left.right = root.child;
-		nullifyRootChildren(root.child, root.child, false);
-		root=root.right;
-	}
-
-	private void nullifyRootChildren(Node current, Node base, boolean baseAdded) {
-		current.parent=null;
-		if (current.equals(base) && baseAdded || base == base.right){
-			return;
-		}
-		nullifyRootChildren(current.right, base, true);
-		
-	}
-	
-	private void fixRootChildren(Node current, Node base, boolean baseAdded, Node min) {
-		current.parent=null;
-		if (current.equals(base) && baseAdded || base == base.right){
-			if(current.priority<min.priority) {
-				root = current;
-			}
-			else {
-				root = min;
-			}
-			
-			return;
-		}
-		if(current.priority<min.priority) {
-			fixRootChildren(current.right, base, true, current);
-		}
-		else {
-			fixRootChildren(current.right, base, true, min);
-		}
-		
-	}
-
-	// This is a utility method to perform merges as part of the fib heap cleanup (happens on every popMin)
-	//must track size during merge
-	
-	private void mergeAll() {
-		Object[] nodesOfDegree = new Object[(int)( Math.log(size) / Math.log(1.618)) + 1];
-		mergeHelper(nodesOfDegree, root, false);
-	}
-	
-
-	private void mergeHelper(Object[] nodesOfDegree, Node currentNode, boolean rootIsAdded) {
-		if ((currentNode.equals(root) && rootIsAdded) || root.right.equals(root)) {
-			return;
-		}
-		if(nodesOfDegree[currentNode.degree] != null) {
-			mergeTrees((Node) nodesOfDegree[currentNode.degree], currentNode);
-			//System.out.println("The level order after the last merge is:\n" + visualString(root, root, false,0)+"\n\n\n");
-			mergeHelper(new Object[nodesOfDegree.length], root, false);
-		}
-		else {
-			nodesOfDegree[currentNode.degree] = currentNode;
-			mergeHelper(nodesOfDegree, currentNode.right, true);
-		}
-	}
-	
-	private void mergeTrees(Node n1, Node n2){
-		if(n1.priority > n2.priority) {
-			mergeOrderedTrees(n2, n1);
-		}
-		else {
-			mergeOrderedTrees(n1, n2);
-		}
-	}
-	
-	private void mergeOrderedTrees(Node min, Node newChild) {
-		newChild.right.left = newChild.left;
-		newChild.left.right = newChild.right;
-		if(min.child == null){
-			min.child = newChild;
-			newChild.right = newChild;
-			newChild.left = newChild;
-			newChild.parent = min;
-			min.degree++;
-			if(newChild.equals(root)) {
-				root = min;
-			}
-			return;
-		}
-		newChild.right = min.child;
-		newChild.left = min.child.left;
-		min.child.left.right = newChild;
-		min.child.left = newChild;
-		newChild.parent = min;
-		min.degree++;
-		if(newChild.equals(root)) {
-			root = min;
-		}
-	}
 	public E peek() {
 		return root.data;
 	}
@@ -275,13 +270,13 @@ public class FibHeap<E> {
 
 	  public boolean decrease_key(E key, int nval) {
 	    Node x = find(key);
-	    return decrease_key(x, nval);
+	    return x==null ? false : decrease_key(x, nval);
 	  }
 
 	  // Decrease key operation
 	  private boolean decrease_key(Node x, int k) {
 	    if (k > x.priority)
-	      return false;
+	      return true;
 	    x.priority = k;
 	    Node y = x.parent;
 	    if (y != null && x.priority < y.priority) {
